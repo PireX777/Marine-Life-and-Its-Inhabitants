@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Portfólio da Vida Marinha</title>
+    <style>
+        :root{
+            --bg1:#1e3c72;
+            --bg2:#2a5298;
+            --card-bg: rgba(255,255,255,0.98);
+            --accent1:#00416a;
+            --accent2:#1560bd;
+            --text-dark:#5d76cb;
+        }
+        *{box-sizing:border-box}
+        body{
+            margin:0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--bg1) 0%, var(--bg2) 100%);
+            color:#333;
+            line-height:1.6;
+            -webkit-font-smoothing:antialiased;
+        }
+        .container{
+            max-width:1200px;
+            margin:0 auto;
+            padding:24px;
+        }
+        header{
+            text-align:center;
+            padding:36px 20px;
+            background: rgba(255,255,255,0.06);
+            border-radius:18px;
+            margin-bottom:28px;
+            backdrop-filter: blur(6px);
+        }
+        h1{
+            color:#fff;
+            font-size:2.6rem;
+            margin:0;
+            text-shadow:2px 2px 6px rgba(0,0,0,0.35);
+        }
+        .subtitle{
+            color:#e8f4f8;
+            margin-top:8px;
+            font-size:1.05rem;
+        }
+
+        .stats-container{
+            display:grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px,1fr));
+            gap:18px;
+            margin:20px 0;
+        }
+        .stat-card{
+            background: rgba(255,255,255,0.12);
+            padding:14px;
+            border-radius:12px;
+            text-align:center;
+            background-color: #ffffff;
+            backdrop-filter: blur(6px);
+        }
+        .stat-number{
+            font-size:1.8rem;
+            font-weight:700;
+            color: #1e3c72;
+        }
+        .stat-label{
+            color: #343636f3;
+            font-size:0.95rem;
+        }
+
+        .search-container{
+            display:flex;
+            justify-content:center;
+            margin:22px 0;
+        }
+        .search-box{
+            width:420px;
+            max-width:90%;
+            padding:12px 16px;
+            border-radius:28px;
+            border:none;
+            font-size:1rem;
+            outline:none;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+        }
+
+        .filter-buttons{
+            display:flex;
+            justify-content:center;
+            gap:10px;
+            margin:18px 0;
+            flex-wrap:wrap;
+        }
+        .filter-btn{
+            padding:10px 16px;
+            border-radius:22px;
+            border:none;
+            cursor:pointer;
+            font-weight:600;
+            background: rgba(255,255,255,0.14);
+            color:white;
+            backdrop-filter: blur(6px);
+        }
+        .filter-btn.active, .filter-btn:hover{
+            background: var(--card-bg);
+            color: var(--text-dark);
+            transform: translateY(-3px);
+        }
+
+        .animals-grid{
+            display:grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px,1fr));
+            gap:22px;
+            margin-top:12px;
+        }
+
+        .animal-card{
+            background: var(--card-bg);
+            border-radius:14px;
+            overflow:hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.16);
+            transition: transform .35s cubic-bezier(.2,.9,.2,1), box-shadow .35s;
+            position:relative;
+            cursor: default;
+        }
+        .animal-card:hover{
+            transform: translateY(-8px);
+            box-shadow: 0 24px 50px rgba(0,0,0,0.22);
+        }
+
+        .animal-image{
+            width:100%;
+            height:220px; /* retangular */
+            object-fit:cover;
+            display:block;
+        }
+
+        .animal-content{
+            padding:18px;
+        }
+
+        .animal-name{
+            font-size:1.4rem;
+            color:var(--text-dark);
+            margin:6px 0 12px;
+            font-weight:700;
+        }
+
+        .info-section{
+            margin-bottom:10px;
+        }
+        .info-title{
+            font-weight:700;
+            color:var(--text-dark);
+            font-size:0.95rem;
+            display:flex;
+            gap:8px;
+            align-items:center;
+        }
+        .info-content{
+            margin-left:0;
+            color:#444;
+            font-size:0.95rem;
+            text-align:justify;
+        }
+
+        .wave-decoration{
+            position:absolute;
+            top:0;
+            left:0;
+            right:0;
+            height:6px;
+            background: linear-gradient(90deg, var(--accent1) 0%, var(--accent2) 100%);
+            transition: all .3s;
+        }
+
+        .author-credit{
+            margin-top:12px;
+            background: linear-gradient(90deg, var(--accent1) 0%, var(--accent2) 100%);
+            color:#ffffff;
+            padding:8px 10px;
+            border-radius:10px;
+            display:inline-block;
+            font-weight:700;
+            font-size:0.85rem;
+        }
+
+        @media(max-width:768px){
+            h1{font-size:1.6rem}
+            .animal-image{height:160px}
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1> Vida Marinha e Seus Habitantes </h1>
+            <p class="subtitle">Explore o oceano e seus Habitantes</p>
+        </header>
+
+        <div class="search-container">
+            <input id="searchInput" class="search-box" type="text" placeholder="🔍 Pesquisar animal, local ou responsável..." />
+        </div>
+
+        <div class="filter-buttons" role="toolbar" aria-label="Filtrar por categoria">
+            <button class="filter-btn active" onclick="filterAnimals('all', this)">Todos</button>
+            <button class="filter-btn" onclick="filterAnimals('mamifero', this)">Mamíferos</button>
+            <button class="filter-btn" onclick="filterAnimals('peixe', this)">Peixes</button>
+            <button class="filter-btn" onclick="filterAnimals('invertebrado', this)">Invertebrados</button>
+            <button class="filter-btn" onclick="filterAnimals('reptil', this)">Répteis</button>
+            <button class="filter-btn" onclick="filterAnimals('ave', this)">Aves</button>
+        </div>
+
+        <div class="stats-container" aria-hidden="true">
+            <div class="stat-card">
+                <div class="stat-number">24+</div>
+                <div class="stat-label">Espécies no portfólio</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">5</div>
+                <div class="stat-label">Oceanos representados</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">∞</div>
+                <div class="stat-label">Curiosidades</div>
+            </div>
+        </div>
+
+        <div class="animals-grid" id="animalsGrid">
+            <!-- Arraia -->
+            <article class="animal-card" data-category="peixe" data-name="arraia">
+                <div class="wave-decoration" aria-hidden="true"></div>
+                <img class="animal-image" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Spotted_Eagle_Ray_%28Aetobatus_narinari%292.jpg/800px-Spotted_Eagle_Ray_%28Aetobatus_narinari%292.jpg" alt="Arraia nadando no oceano">
+                <div class="animal-content">
+                    <h2 class="animal-name">Arraia</h2>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Onde são encontradas</div>
+                        <div class="info-content">As arraias são comuns em águas costeiras rasas de mares temperados.</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Hábitos</div>
+                        <div class="info-content">Passam a maior parte do tempo inertes, parcialmente enterradas na areia, movendo-se frequentemente apenas com a maré.</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Curiosidades</div>
+                        <div class="info-content">Corpo achatado, cauda muitas vezes com espinhos (farpas) que podem produzir veneno — importantes para defesa. Algumas espécies podem apresentar ferrão perigoso para humanos.</div>
+                    </div>
+
+                    <div class="author-credit">Responsável: Thayná Cavalcante</div>
+                </div>
+            </article>
+
+            <!-- Mexilhão -->
+            <article class="animal-card" data-category="invertebrado" data-name="mexilhão">
+                <div class="wave-decoration" aria-hidden="true"></div>
+                <img class="animal-image" src="https://files.agro20.com.br/uploads/2019/05/mexilh%C3%A3o-01-1024x683.jpg" alt="Mexilhões aderidos às rochas">
+                <div class="animal-content">
+                    <h2 class="animal-name">Mexilhão</h2>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Onde são encontrados</div>
+                        <div class="info-content">Costas marinhas rochosas, zonas de mangue e até áreas de água doce (algumas espécies invasoras se espalham por rios e reservatórios).</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Hábitos</div>
+                        <div class="info-content">Bivalves fixos ao substrato que filtram a água para se alimentarem de plâncton e partículas orgânicas; vivem em colônias densas.</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Curiosidades</div>
+                        <div class="info-content">Podem consumir microplásticos; são ricos em proteínas e ômega-3. Algumas espécies têm larvas que se espalham por hospedeiros.</div>
+                    </div>
+
+                    <div class="author-credit">Responsável: Geovanna Silva</div>
+                </div>
+            </article>
+
+            <!-- Leão Marinho -->
+            <article class="animal-card" data-category="mamifero" data-name="leao marinho">
+                <div class="wave-decoration" aria-hidden="true"></div>
+                <img class="animal-image" src="https://images.unsplash.com/photo-1560864303-fd2acd0016b9?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1170" alt="Leão-marinho descansando na costa rochosa">
+                <div class="animal-content">
+                    <h2 class="animal-name">Leão-marinho</h2>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Onde são encontrados</div>
+                        <div class="info-content">Costas do Atlântico e Pacífico Sul, incluindo regiões costeiras do sul do Brasil e outras áreas temperadas.</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Hábitos</div>
+                        <div class="info-content">Vivem em colônias em praias e costões; alternam períodos no mar (caça) e em terra (repouso e reprodução).</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Curiosidades</div>
+                        <div class="info-content">Machos têm juba espessa que lembra leões terrestres. São sociais, excelentes nadadores e podem pesar até centenas de quilos.</div>
+                    </div>
+
+                    <div class="author-credit">Responsável: Michaela Araujo</div>
+                </div>
+            </article>
+
+            <!-- Água-viva -->
+            <article class="animal-card" data-category="invertebrado" data-name="agua-viva">
+                <div class="wave-decoration" aria-hidden="true"></div>
+                <img class="animal-image" src="https://images.unsplash.com/photo-1532191343016-47bf741b8b3c?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1074" alt="Água-viva bioluminescente no oceano">
+                <div class="animal-content">
+                    <h2 class="animal-name">Água-viva</h2>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Onde são encontradas</div>
+                        <div class="info-content">Em todos os oceanos do mundo, desde a superfície até grandes profundidades; algumas espécies semelhantes vivem em água doce.</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Hábitos</div>
+                        <div class="info-content">São pelágicas, flutuam com correntes e se movem com impulsos do "guarda-chuva"; alimentam-se de plâncton e pequenos peixes com tentáculos.</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Curiosidades</div>
+                        <div class="info-content">Muitas espécies são bioluminescentes; algumas têm ciclos que permitem formas de regeneração e até casos de "imortalidade" biológica em condições específicas.</div>
+                    </div>
+
+                    <div class="author-credit">Responsável: Maryanne Eduarda</div>
+                </div>
+            </article>
+
+            <!-- Esponja do Mar -->
+            <article class="animal-card" data-category="invertebrado" data-name="esponja do mar">
+                <div class="wave-decoration" aria-hidden="true"></div>
+                <img class="animal-image" src="https://images.unsplash.com/photo-1674121929308-80eac145d8fc?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=627" alt="Esponjas coloridas fixadas no fundo do mar">
+                <div class="animal-content">
+                    <h2 class="animal-name">Esponja-do-mar</h2>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Onde são encontradas</div>
+                        <div class="info-content">Oceanos e mares do mundo inteiro, desde águas rasas até grandes profundidades, fixadas em rochas ou corais.</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Hábitos</div>
+                        <div class="info-content">Filtram água constantemente para capturar nutrientes; preferem locais com bom fluxo de água e oxigenação.</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Curiosidades</div>
+                        <div class="info-content">Não têm cérebro nem sistema nervoso avançado; têm grande capacidade de regeneração e diversidade de formas e cores.</div>
+                    </div>
+
+                    <div class="author-credit">Responsável: Ana Beatriz Rodrigues</div>
+                </div>
+            </article>
+
+            <!-- Pinguim -->
+            <article class="animal-card" data-category="ave" data-name="pinguim">
+                <div class="wave-decoration" aria-hidden="true"></div>
+                <img class="animal-image" src="https://media.istockphoto.com/id/2203667086/pt/foto/king-penguin-in-front-of-floating-iceberg-in-antarctica.webp?a=1&b=1&s=612x612&w=0&k=20&c=MzjOdj0bt6vXJGDP8orGREJRbdNHCjaZkRd0UM6zdDE=" alt="Pinguim nadando e surfando ondas">
+                <div class="animal-content">
+                    <h2 class="animal-name">Pinguim</h2>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Onde são encontrados</div>
+                        <div class="info-content">Principalmente no Hemisfério Sul: Antártica, Patagônia, África do Sul, Austrália, Nova Zelândia e ilhas como Galápagos (algumas espécies).</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Hábitos</div>
+                        <div class="info-content">Vivem em colônias costeiras; alimentam-se de peixes, lulas e krill; nadam e mergulham com grande eficiência.</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Curiosidades</div>
+                        <div class="info-content">Não voam, mas são excelentes nadadores; o pinguim-imperador mergulha a grandes profundidades e tem adaptações para longos períodos sem alimento durante a reprodução.</div>
+                    </div>
+
+                    <div class="author-credit">Responsável: Kiara Soares</div>
+                </div>
+            </article>
+
+            <!-- Lula -->
+            <article class="animal-card" data-category="invertebrado" data-name="lula">
+                <div class="wave-decoration" aria-hidden="true"></div>
+                <img class="animal-image" src="https://images.unsplash.com/photo-1569933044748-ab0fa292068a?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1632" alt="Lula nadando no oceano profundo">
+                <div class="animal-content">
+                    <h2 class="animal-name">Lula</h2>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Onde são encontradas</div>
+                        <div class="info-content">Em todos os oceanos do mundo, de águas costeiras a zonas abissais.</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Hábitos</div>
+                        <div class="info-content">Predadoras ativas, muitas vezes noturnas; algumas espécies formam agregações e têm comportamentos complexos.</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Curiosidades</div>
+                        <div class="info-content">Possuem três corações e sangue azulado; são altamente inteligentes e excelentes em camuflagem e solução de problemas.</div>
+                    </div>
+
+                    <div class="author-credit">Responsável: Kellyn Vitória</div>
+                </div>
+            </article>
+
+            <!-- Cavalo Marinho -->
+            <article class="animal-card" data-category="peixe" data-name="cavalo marinho">
+                <div class="wave-decoration" aria-hidden="true"></div>
+                <img class="animal-image" src="https://images.unsplash.com/photo-1595503147345-445c90a74a0b?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1523" alt="Cavalo-marinho entre ervas marinhas">
+                <div class="animal-content">
+                    <h2 class="animal-name">Cavalo-marinho</h2>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Onde são encontrados</div>
+                        <div class="info-content">Costas tropicais e temperadas, em recifes, prados de ervas marinhas e manguezais.</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Hábitos</div>
+                        <div class="info-content">Nadam verticalmente e se agarram em vegetação marinha com a cauda; alimentam-se de pequenos crustáceos.</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Curiosidades</div>
+                        <div class="info-content">O macho carrega os ovos em uma bolsa incubadora — ele "engravida" e dá à luz aos filhotes.</div>
+                    </div>
+
+                    <div class="author-credit">Responsável: Kivia Vitória</div>
+                </div>
+            </article>
+
+            <!-- Peixe Jaú -->
+            <article class="animal-card" data-category="peixe" data-name="peixe jau">
+                <div class="wave-decoration" aria-hidden="true"></div>
+                <img class="animal-image" src="https://blogdopescador.com/wp-content/uploads/2021/11/jau.jpg" alt="Peixe de água doce grande nadando">
+                <div class="animal-content">
+                    <h2 class="animal-name">Peixe Jaú</h2>
+
+                    <div class="info-section">
+                        <div class="info-title">  ● Onde são encontrados</div>
+                        <div class="info-content">Bacias amazônica e do Prata — rios brasileiros como o Amazonas e o Paraná.</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Hábitos</div>
+                        <div class="info-content">Predador de grande porte que se alimenta de peixes menores, crustáceos e, ocasionalmente, pequenos mamíferos aquáticos.</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Curiosidades</div>
+                        <div class="info-content">Pode atingir mais de 1,5 m de comprimento e viver por décadas; espécie emblemática da pesca continental brasileira.</div>
+                    </div>
+
+                    <div class="author-credit">Responsável: Ludmila Costa</div>
+                </div>
+            </article>
+
+            <!-- Estrela do Mar -->
+            <article class="animal-card" data-category="invertebrado" data-name="estrela do mar">
+                <div class="wave-decoration" aria-hidden="true"></div>
+                <img class="animal-image" src="https://images.unsplash.com/photo-1514503612056-e3f673b3f3bd?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1126" alt="Estrela-do-mar colorida sobre uma rocha">
+                <div class="animal-content">
+                    <h2 class="animal-name">Estrela-do-mar</h2>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Onde são encontradas</div>
+                        <div class="info-content">Em todos os oceanos, de zonas entre-marés a profundidades abissais; comuns em recifes e costões rochosos.</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Hábitos</div>
+                        <div class="info-content">Rastejam pelo fundo marinho usando pés ambulacrários para capturar moluscos e outros invertebrados.</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Curiosidades</div>
+                        <div class="info-content">Muitas espécies regeneram braços perdidos e algumas podem regenerar o corpo inteiro a partir de parte do disco central.</div>
+                    </div>
+
+                    <div class="author-credit">Responsável: Isabelly Vitória</div>
+                </div>
+            </article>
+
+            <!-- Polvo -->
+            <article class="animal-card" data-category="invertebrado" data-name="polvo">
+                <div class="wave-decoration" aria-hidden="true"></div>
+                <img class="animal-image" src="https://images.unsplash.com/photo-1628944681206-2ee8d63b0a6b?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1170" alt="Polvo camuflado entre rochas">
+                <div class="animal-content">
+                    <h2 class="animal-name">Polvo</h2>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Onde são encontrados</div>
+                        <div class="info-content">Regiões costeiras tropicais e temperadas; vivem em tocas, fendas rochosas e recifes.</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Hábitos</div>
+                        <div class="info-content">Predadores solitários e noturnos que constroem tocas e usam seus braços e ventosas para capturar presas.</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Curiosidades</div>
+                        <div class="info-content">Possuem três corações e sangue azul; são altamente inteligentes e excelentes em camuflagem e solução de problemas.</div>
+                    </div>
+
+                    <div class="author-credit">Responsável: Thais Vitória</div>
+                </div>
+            </article>
+
+            <!-- Tartaruga Marinha -->
+            <article class="animal-card" data-category="reptil" data-name="tartaruga marinha">
+                <div class="wave-decoration" aria-hidden="true"></div>
+                <img class="animal-image" src="https://images.unsplash.com/photo-1437622368342-7a3d73a34c8f?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1528" alt="Tartaruga marinha nadando">
+                <div class="animal-content">
+                    <h2 class="animal-name">Tartaruga Marinha</h2>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Onde são encontradas</div>
+                        <div class="info-content">Oceanos tropicais e subtropicais do mundo inteiro; no Brasil, áreas de desova em diversos estados litorâneos.</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Hábitos</div>
+                        <div class="info-content">Migram longas distâncias; alimentam-se de algas, águas-vivas e outros invertebrados; fêmeas retornam à praia natal para desovar.</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Curiosidades</div>
+                        <div class="info-content">Algumas espécies vivem mais de 100 anos e apresentam navegação reprodutiva extremamente fiel ao local de nascimento.</div>
+                    </div>
+
+                    <div class="author-credit">Responsável: Karine Vitória</div>
+                </div>
+            </article>
+
+            <!-- Ovelha do Mar -->
+            <article class="animal-card" data-category="invertebrado" data-name="ovelha do mar">
+                <div class="wave-decoration" aria-hidden="true"></div>
+                <img class="animal-image" src="https://content.nationalgeographic.pt/medio/2023/05/17/babosacapa_7023547e_230517104602_1280x849.jpg" alt="Pequena ovelha-do-mar sobre algas">
+                <div class="animal-content">
+                    <h2 class="animal-name">Ovelha-do-mar</h2>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Onde são encontradas</div>
+                        <div class="info-content">Águas rasas tropicais do Pacífico (Japão, Filipinas, Indonésia etc.) — vive entre algas marinhas.</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Hábitos</div>
+                        <div class="info-content">Alimenta-se de algas e pratica cleptoplastia (rouba cloroplastos das algas), mantendo-os funcionando em seu corpo.</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Curiosidades</div>
+                        <div class="info-content">Minúscula (mm), realiza fotossíntese com cloroplastos roubados e ficou famosa por sua aparência fofa.</div>
+                    </div>
+
+                    <div class="author-credit">Responsável: Beatriz Aparecida</div>
+                </div>
+            </article>
+
+            <!-- Caranguejo -->
+            <article class="animal-card" data-category="invertebrado" data-name="caranguejo">
+                <div class="wave-decoration" aria-hidden="true"></div>
+                <img class="animal-image" src="https://images.unsplash.com/photo-1580841129862-bc2a2d113c45?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1173" alt="Caranguejo na praia">
+                <div class="animal-content">
+                    <h2 class="animal-name">Caranguejo</h2>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Onde são encontrados</div>
+                        <div class="info-content">Regiões litorâneas ao redor do mundo: praias, manguezais, costões rochosos e estuários.</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Hábitos</div>
+                        <div class="info-content">Escavam tocas, alimentam-se de algas, detritos e pequenos animais; muitas espécies são adaptadas a certo grau de vida em terra.</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Curiosidades</div>
+                        <div class="info-content">Possuem exoesqueleto e realizam mudas para crescer; algumas espécies trocam de "casa" (eremitas) quando necessário.</div>
+                    </div>
+
+                    <div class="author-credit">Responsável: Kyssila Ester</div>
+                </div>
+            </article>
+
+            <!-- Tubarão Branco -->
+            <article class="animal-card" data-category="peixe" data-name="tubarao branco">
+                <div class="wave-decoration" aria-hidden="true"></div>
+                <img class="animal-image" src="https://images.unsplash.com/photo-1704694214588-24f4bae4757b?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1170" alt="Tubarão branco nadando em mar aberto">
+                <div class="animal-content">
+                    <h2 class="animal-name">Tubarão Branco</h2>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Onde são encontrados</div>
+                        <div class="info-content">Águas costeiras temperadas por todo o mundo; registros em regiões como África do Sul, Austrália e ocasionalmente no litoral brasileiro.</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Hábitos</div>
+                        <div class="info-content">Predador de topo que caça focas, leões-marinhos e peixes grandes; pode migrar longas distâncias.</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Curiosidades</div>
+                        <div class="info-content">Maior peixe predador; possui várias fileiras de dentes substitutos e sentidos altamente desenvolvidos (olfato, eletrossensibilidade).</div>
+                    </div>
+
+                    <div class="author-credit">Responsável: Ana Luiza Conrado</div>
+                </div>
+            </article>
+
+            <!-- Camarão -->
+            <article class="animal-card" data-category="invertebrado" data-name="camarao">
+                <div class="wave-decoration" aria-hidden="true"></div>
+                <img class="animal-image" src="https://images.unsplash.com/photo-1711612901199-ffad39e8aa13?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1170" alt="Camarão próximo a corais">
+                <div class="animal-content">
+                    <h2 class="animal-name">Camarão</h2>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Onde são encontrados</div>
+                        <div class="info-content">Em ambientes marinhos e de água doce em todo o mundo, desde águas rasas até profundidades maiores.</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Hábitos</div>
+                        <div class="info-content">Alimentam-se de plâncton, algas e detritos; muitas espécies formam cardumes e têm ciclos de vida variados.</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Curiosidades</div>
+                        <div class="info-content">Camarão-pistola gera bolhas com forte impacto acústico; existem milhares de espécies com ampla diversidade morfológica.</div>
+                    </div>
+
+                    <div class="author-credit">Responsável: Maria Eduarda Galdino</div>
+                </div>
+            </article>
+
+            <!-- Enguia Europeia -->
+            <article class="animal-card" data-category="peixe" data-name="enguia europeia">
+                <div class="wave-decoration" aria-hidden="true"></div>
+                <img class="animal-image" src="https://www.fluviariomora.pt/wp-content/uploads/2022/03/IMG_2209-scaled.jpg" alt="Enguia serpenteando entre plantas aquáticas">
+                <div class="animal-content">
+                    <h2 class="animal-name">Enguia Europeia</h2>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Onde são encontradas</div>
+                        <div class="info-content">Rios, estuários e costas da Europa e norte da África; migram para o Mar dos Sargaços para reproduzir.</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Hábitos</div>
+                        <div class="info-content">Anfídromas: nascem no oceano, migram para água doce para crescer e retornam ao mar para reprodução; preferem fundos lamacentos e vegetação.</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Curiosidades</div>
+                        <div class="info-content">Viajam milhares de quilômetros até o sítio reprodutor no Mar dos Sargaços; podem viver décadas em cativeiro e têm importante valor cultural e gastronômico em várias regiões.</div>
+                    </div>
+
+                    <div class="author-credit">Responsável: Kassyane Santos</div>
+                </div>
+            </article>
+
+            <!-- Coral -->
+            <article class="animal-card" data-category="invertebrado" data-name="coral">
+                <div class="wave-decoration" aria-hidden="true"></div>
+                <img class="animal-image" src="https://images.unsplash.com/photo-1514907283155-ea5f4094c70c?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1170" alt="Recife de coral colorido">
+                <div class="animal-content">
+                    <h2 class="animal-name">Coral</h2>
+
+                    <div class="info-section">
+                        <div class="info-title">  ● Onde são encontrados</div>
+                        <div class="info-content">Principalmente em águas tropicais rasas e claras, mas também existem corais de águas frias em grandes profundidades.</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title">  ● Hábitos</div>
+                        <div class="info-content">Pólipos coloniais que constroem esqueletos calcários; vivem em simbiose com microalgas (zooxantelas) que realizam fotossíntese.</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title">  ● Curiosidades</div>
+                        <div class="info-content">Recifes abrigam grande biodiversidade; corais são animais e sensíveis ao aquecimento e à poluição (branqueamento).</div>
+                    </div>
+
+                    <div class="author-credit">Responsável: Isabela Libânia</div>
+                </div>
+            </article>
+
+            <!-- Ouriço do Mar -->
+            <article class="animal-card" data-category="invertebrado" data-name="ourico do mar">
+                <div class="wave-decoration" aria-hidden="true"></div>
+                <img class="animal-image" src="https://images.unsplash.com/photo-1601302688238-f6f27b53daed?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1170" alt="Ouriço-do-mar com espinhos">
+                <div class="animal-content">
+                    <h2 class="animal-name">Ouriço-do-mar</h2>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Onde são encontrados</div>
+                        <div class="info-content">Em todos os oceanos, desde zonas entre-marés até grandes profundidades (até milhares de metros).</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Hábitos</div>
+                        <div class="info-content">Raspam algas com a "Lanterna de Aristóteles" (conjunto de dentes); movem-se com pés tubulares e espinhos.</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Curiosidades</div>
+                        <div class="info-content">Possuem cinco dentes em forma de estrela; algumas espécies vivem mais de 200 anos; desempenham papel ecológico no controle de algas.</div>
+                    </div>
+
+                    <div class="author-credit">Responsável: Rafaela Rangel</div>
+                </div>
+            </article>
+
+            <!-- Plâncton -->
+            <article class="animal-card" data-category="invertebrado" data-name="plancton">
+                <div class="wave-decoration" aria-hidden="true"></div>
+                <img class="animal-image" src="https://media.istockphoto.com/id/1441350218/pt/foto/copepod.jpg?s=612x612&w=0&k=20&c=-7VT-vX78R2d01FMafomDDjYKVg-z3-4l3FDBvCq2og=" alt="Ilustração de plâncton bioluminescente">
+                <div class="animal-content">
+                    <h2 class="animal-name">Plâncton</h2>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Onde são encontrados</div>
+                        <div class="info-content">Em todos os ambientes aquáticos — oceanos, mares, rios e lagos; principalmente nas camadas superiores com luz.</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Hábitos</div>
+                        <div class="info-content">Organismos microscópicos que flutuam com as correntes; formam a base da cadeia alimentar aquática.</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Curiosidades</div>
+                        <div class="info-content">Produzem grande parte do oxigênio do planeta e podem apresentar bioluminescência.</div>
+                    </div>
+
+                    <div class="author-credit">Responsável: Emanuelly Lima</div>
+                </div>
+            </article>
+
+            <!-- Golfinho -->
+            <article class="animal-card" data-category="mamifero" data-name="golfinho">
+                <div class="wave-decoration" aria-hidden="true"></div>
+                <img class="animal-image" src="https://images.unsplash.com/photo-1591706405280-f03acb082051?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1186" alt="Golfinho saltando fora da água">
+                <div class="animal-content">
+                    <h2 class="animal-name">Golfinho</h2>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Onde são encontrados</div>
+                        <div class="info-content">Mares e oceanos ao redor do mundo; algumas espécies também em rios (ex.: boto na Amazônia).</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Hábitos</div>
+                        <div class="info-content">Vida social complexa em grupos; usam ecolocalização para caçar peixes e lulas.</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Curiosidades</div>
+                        <div class="info-content">Extremamente inteligentes, com comunicação variada e comportamentos cooperativos; estudos mostram reconhecimento individual entre eles.</div>
+                    </div>
+
+                    <div class="author-credit">Responsável: Kelvy Danyank</div>
+                </div>
+            </article>
+
+            <!-- Foca -->
+            <article class="animal-card" data-category="mamifero" data-name="foca">
+                <div class="wave-decoration" aria-hidden="true"></div>
+                <img class="animal-image" src="https://images.unsplash.com/photo-1618075254460-429d47b887c7?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1074" alt="Foca descansando sobre gelo">
+                <div class="animal-content">
+                    <h2 class="animal-name">Foca</h2>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Onde são encontrados</div>
+                        <div class="info-content">Regiões frias e temperadas dos hemisférios Norte e Sul; costas do Ártico e Antártico e áreas costeiras frias.</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Hábitos</div>
+                        <div class="info-content">Passam muito tempo na água caçando; também repousam em praias e plataformas de gelo; muitas espécies formam colônias.</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Curiosidades</div>
+                        <div class="info-content">Podem prender a respiração por longos períodos; têm camada de gordura para isolamento térmico; filhotes nascem com pelagem densa.</div>
+                    </div>
+
+                    <div class="author-credit">Responsável: Klara Rabelo</div>
+                </div>
+            </article>
+
+            <!-- Baleia -->
+            <article class="animal-card" data-category="mamifero" data-name="baleia">
+                <div class="wave-decoration" aria-hidden="true"></div>
+                <img class="animal-image" src="https://images.unsplash.com/photo-1568430462989-44163eb1752f?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1173" alt="Baleia emergindo do oceano">
+                <div class="animal-content">
+                    <h2 class="animal-name">Baleia</h2>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Onde são encontrados</div>
+                        <div class="info-content">Em todos os oceanos; muitas espécies migram entre áreas de alimentação e reprodução.</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Hábitos</div>
+                        <div class="info-content">Vida em migração; algumas espécies alimentam-se de krill, outras caçam grandes presas (ex.: cachalote).</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Curiosidades</div>
+                        <div class="info-content">A baleia-azul é o maior animal conhecido; baleias emitem sons complexos que viajam longas distâncias.</div>
+                    </div>
+
+                    <div class="author-credit">Responsável: Nyckollas Panisset</div>
+                </div>
+            </article>
+
+            <!-- Iguana Marinha -->
+            <article class="animal-card" data-category="reptil" data-name="iguana marinha">
+                <div class="wave-decoration" aria-hidden="true"></div>
+                <img class="animal-image" src="https://media.istockphoto.com/id/1059413880/pt/foto/close-up-view-of-galapagos-marine-iguana-swimming-undersea.webp?a=1&b=1&s=612x612&w=0&k=20&c=vOAa27a5D4_17qMAqDynWcRj7-4ORTBBMDnzpVkvOLM=" alt="Iguana-marinha nas rochas vulcânicas">
+                <div class="animal-content">
+                    <h2 class="animal-name">Iguana Marinha</h2>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Onde são encontradas</div>
+                        <div class="info-content">Endêmica das Ilhas Galápagos — única iguana que nada para se alimentar de algas marinhas.</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Hábitos</div>
+                        <div class="info-content">Tomam sol nas rochas para se aquecer e mergulham para grazer algas; têm glândulas que expelem excesso de sal.</div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-title"> ● Curiosidades</div>
+                        <div class="info-content">Podem mergulhar e espirrar sal pelas narinas; são um exemplo incrível de adaptação evolutiva.</div>
+                    </div>
+
+                    <div class="author-credit">Responsável: Andreza Gabrielly</div>
+                </div>
+            </article>
+        </div> <!-- /animalsGrid -->
+    </div> <!-- /container -->
+
+    <script>
+        // Busca em tempo real
+        const searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('input', function(e){
+            const term = e.target.value.toLowerCase().trim();
+            const cards = document.querySelectorAll('.animal-card');
+            cards.forEach(card => {
+                const name = card.dataset.name.toLowerCase();
+                const text = card.textContent.toLowerCase();
+                if(!term || name.includes(term) || text.includes(term)){
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        // Filtro por categoria
+        function filterAnimals(category, btn){
+            const cards = document.querySelectorAll('.animal-card');
+            const buttons = document.querySelectorAll('.filter-btn');
+            buttons.forEach(b => b.classList.remove('active'));
+            if(btn) btn.classList.add('active');
+
+            cards.forEach(card => {
+                if(category === 'all' || card.dataset.category === category){
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Animação de entrada suave
+        function animateCards(){
+            const cards = document.querySelectorAll('.animal-card');
+            cards.forEach((card, i) => {
+                card.style.opacity = 0;
+                card.style.transform = 'translateY(18px)';
+                setTimeout(() => {
+                    card.style.transition = 'opacity 0.45s ease, transform 0.45s ease';
+                    card.style.opacity = 1;
+                    card.style.transform = 'translateY(0)';
+                }, 80 * i);
+            });
+        }
+        window.addEventListener('load', animateCards);
+
+        // Accessibility: Enter to focus search
+        document.addEventListener('keydown', (e) => {
+            if(e.key === 'f' && (e.ctrlKey || e.metaKey)) {
+                e.preventDefault();
+                searchInput.focus();
+            }
+        });
+    </script>
+</body>
+</html>
